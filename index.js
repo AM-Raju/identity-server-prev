@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -26,6 +26,7 @@ async function run() {
 
     const db = client.db("identity");
     const productsCollection = db.collection("products");
+    const categoriesCollection = db.collection("categories");
 
     /* // User Registration
     app.post("/api/v1/register", async (req, res) => {
@@ -89,8 +90,35 @@ async function run() {
       });
     }); */
 
-    app.get("/products", async (req, res) => {
+    app.get("/categories", async (req, res) => {
+      const result = await categoriesCollection.find().toArray();
+      res.send(result);
+    });
+
+    app.get("/all-products", async (req, res) => {
       const result = await productsCollection.find().toArray();
+      res.send(result);
+    });
+
+    app.get("/products", async (req, res) => {
+      const query = { flashSale: false };
+      const result = await productsCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    app.get("/flash-products", async (req, res) => {
+      const query = { flashSale: true };
+      const result = await productsCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    app.get("/products/:id", async (req, res) => {
+      const id = req.params.id;
+
+      const productId = new ObjectId(id);
+      const query = { _id: productId };
+
+      const result = await productsCollection.findOne(query);
       res.send(result);
     });
 
