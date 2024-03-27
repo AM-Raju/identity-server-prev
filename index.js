@@ -116,6 +116,14 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/top-reviews", async (req, res) => {
+      const result = await productsCollection
+        .find()
+        .sort({ ratings: -1 })
+        .toArray();
+      res.send(result);
+    });
+
     // Start the server
     app.listen(port, () => {
       console.log(`Server is running on http://localhost:${port}`);
