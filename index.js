@@ -100,12 +100,6 @@ async function run() {
       res.send(result);
     });
 
-    app.get("/products", async (req, res) => {
-      const query = { flashSale: false };
-      const result = await productsCollection.find(query).toArray();
-      res.send(result);
-    });
-
     app.get("/flash-products", async (req, res) => {
       const query = { flashSale: true };
       const result = await productsCollection.find(query).toArray();
