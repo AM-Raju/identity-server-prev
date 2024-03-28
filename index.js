@@ -95,6 +95,34 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/dresses/:category", async (req, res) => {
+      const category = req.params.category;
+
+      const result = await categoriesCollection
+        .aggregate([
+          // Stage one
+
+          {
+            $lookup: {
+              from: "products",
+              localField: "slug",
+              foreignField: "category",
+              as: "dresses",
+            },
+          },
+
+          // Stage two
+          {
+            $match: {
+              slug: category,
+            },
+          },
+        ])
+        .toArray();
+
+      res.send(result);
+    });
+
     app.get("/all-products", async (req, res) => {
       const result = await productsCollection.find().toArray();
       res.send(result);
